@@ -7,6 +7,9 @@
 #include <mbgl/util/async_task.hpp>
 #include <mbgl/util/async_request.hpp>
 #include <mbgl/util/version.hpp>
+// Hai Pham - 2022/03/06
+#include <mbgl/util/data_decode.hpp>
+
 
 #import <Foundation/Foundation.h>
 
@@ -346,6 +349,11 @@ std::unique_ptr<AsyncRequest> HTTPFileSource::request(const Resource& resource, 
 
                     if (responseCode == 200) {
                         response.data = std::make_shared<std::string>((const char *)[data bytes], [data length]);
+                        // Hai Pham - 2022/03/06
+                        // Add decode for resource type Tile
+                        if (isTile) {
+                            dataDecode(response.data);
+                        }
                     } else if (responseCode == 204 || (responseCode == 404 && isTile)) {
                         response.noContent = true;
                     } else if (responseCode == 304) {

@@ -9,9 +9,13 @@
 #include <mbgl/util/http_header.hpp>
 #include <mbgl/util/string.hpp>
 #include <mbgl/util/util.hpp>
+// Hai Pham - 2022/03/06
+#include <mbgl/util/data_decode.hpp>
 
 #include <jni/jni.hpp>
 #include "attach_env.hpp"
+
+
 
 namespace mbgl {
 
@@ -144,6 +148,11 @@ void HTTPRequest::onResponse(jni::JNIEnv& env, int code,
             auto data = std::make_shared<std::string>(body.Length(env), char());
             jni::GetArrayRegion(env, *body, 0, data->size(), reinterpret_cast<jbyte*>(&(*data)[0]));
             response.data = data;
+            // Hai Pham - 2022/03/06
+            // Add decode for resource type Tile
+            if (resource.kind == Resource::Kind::Tile) {
+                dataDecode(response.data);
+            }
         } else {
             response.data = std::make_shared<std::string>();
         }
